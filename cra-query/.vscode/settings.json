@@ -1,0 +1,12 @@
+{
+  "files.autoSave": "off",
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "tailwindCSS.emmetCompletions": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript, javascriptreact, typescript, typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.formatOnSave": true
+}
