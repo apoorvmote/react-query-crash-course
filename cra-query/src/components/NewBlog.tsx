@@ -3,7 +3,6 @@ import { Blog, BlogInput, MyError } from "MyTypes"
 import { nanoid } from "nanoid"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { useMutation, useQueryClient } from "react-query"
 import useNewBlog from "../hooks/useNewBlog"
 
 type Props = RouteComponentProps
@@ -11,11 +10,11 @@ type Props = RouteComponentProps
 function NewBlog(props: Props): JSX.Element {
   const { register, handleSubmit } = useForm<BlogInput>()
 
-  const [isLoading, setIsLoading] = useState(false)
+  // const [isLoading, setIsLoading] = useState(false)
 
   const navigate = useNavigate()
 
-  //   const { mutate, isLoading } = useNewBlog();
+  const { mutate, isLoading } = useNewBlog()
 
   async function onSubmit(input: BlogInput) {
     const newBlog: Blog = {
@@ -24,27 +23,27 @@ function NewBlog(props: Props): JSX.Element {
       ...input,
     }
 
-    // mutate(newBlog);
+    mutate(newBlog)
 
-    setIsLoading(true)
+    // setIsLoading(true)
 
-    try {
-      await fetch("http://localhost:4000/blogs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newBlog),
-      })
+    // try {
+    //   await fetch("http://localhost:4000/blogs", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(newBlog),
+    //   })
 
-      setIsLoading(false)
+    //   setIsLoading(false)
 
-      navigate("/")
-    } catch (err) {
-      console.log(err)
+    //   navigate("/")
+    // } catch (err) {
+    //   console.log(err)
 
-      setIsLoading(false)
-    }
+    //   setIsLoading(false)
+    // }
   }
 
   return (

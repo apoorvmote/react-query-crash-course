@@ -53,31 +53,31 @@ import { QueryObserverResult, useQuery, useQueryClient } from "react-query"
 //   }
 // }
 
-// export default function useBlogSingle(id?: string): QueryObserverResult<Blog, MyError> {
-//   return useQuery<Blog, MyError, Blog>(
-//     ["blogs", id],
-//     () => {
-//       return fetch(`http://localhost:4000/blogs/${id}`)
-//         .then((res) => {
-//           if (!res.ok) throw Error(res.statusText)
+export default function useBlogSingle(id?: string): QueryObserverResult<Blog, MyError> {
+  return useQuery<Blog, MyError, Blog>(
+    ["blogs", id],
+    () => {
+      return fetch(`http://localhost:4000/blogs/${id}`)
+        .then((res) => {
+          if (!res.ok) throw Error(res.statusText)
 
-//           return res.json()
-//         })
-//         .then((res) => {
-//           return new Promise<Blog>((resolve) => {
-//             setTimeout(() => {
-//               resolve(res)
-//             }, 4000)
-//           })
-//         })
-//     },
-//     {
-//       // refetchOnWindowFocus: false,
-//       // refetchOnMount: false,
-//       // staleTime: 5 * 60 * 1000,
-//     }
-//   )
-// }
+          return res.json()
+        })
+        .then((res) => {
+          return new Promise<Blog>((resolve) => {
+            setTimeout(() => {
+              resolve(res)
+            }, 4000)
+          })
+        })
+    },
+    {
+      // refetchOnWindowFocus: false,
+      // refetchOnMount: false,
+      staleTime: 5 * 60 * 1000,
+    }
+  )
+}
 
 // export default function useBlogSingle(id?: string): QueryObserverResult<Blog, MyError> {
 //   const client = useQueryClient()
@@ -123,35 +123,35 @@ import { QueryObserverResult, useQuery, useQueryClient } from "react-query"
 //   )
 // }
 
-interface CancelablePromise extends Promise<Blog> {
-  cancel?: () => void
-}
+// interface CancelablePromise extends Promise<Blog> {
+//   cancel?: () => void
+// }
 
-export default function useBlogSingle(id?: string): QueryObserverResult<Blog, MyError> {
-  return useQuery<Blog, MyError, Blog>(["blogs", id], () => {
-    const controller = new AbortController()
+// export default function useBlogSingle(id?: string): QueryObserverResult<Blog, MyError> {
+//   return useQuery<Blog, MyError, Blog>(["blogs", id], () => {
+//     const controller = new AbortController()
 
-    const signal = controller.signal
+//     const signal = controller.signal
 
-    const promise: CancelablePromise = fetch(`http://localhost:4000/blogs/${id}`, {
-      method: "GET",
-      signal,
-    })
-      .then((res) => {
-        if (!res.ok) throw Error(res.statusText)
+//     const promise: CancelablePromise = fetch(`http://localhost:4000/blogs/${id}`, {
+//       method: "GET",
+//       signal,
+//     })
+//       .then((res) => {
+//         if (!res.ok) throw Error(res.statusText)
 
-        return res.json()
-      })
-      .then((res) => {
-        return new Promise<Blog>((resolve) => {
-          setTimeout(() => {
-            resolve(res)
-          }, 4000)
-        })
-      })
+//         return res.json()
+//       })
+//       .then((res) => {
+//         return new Promise<Blog>((resolve) => {
+//           setTimeout(() => {
+//             resolve(res)
+//           }, 4000)
+//         })
+//       })
 
-    promise.cancel = () => controller.abort()
+//     promise.cancel = () => controller.abort()
 
-    return promise
-  })
-}
+//     return promise
+//   })
+// }

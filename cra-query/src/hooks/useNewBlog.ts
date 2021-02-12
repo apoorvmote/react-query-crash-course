@@ -9,28 +9,42 @@ export default function useNewBlog(): UseMutationResult<Blog, MyError, Blog, unk
 
   return useMutation<Blog, MyError, Blog>(
     (blog: Blog) =>
-      fetch("http://localhost:4000/blogs", {
+      fetch("http://localhost:4000/blog", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(blog),
-      }).then((res) => res.json()),
+      })
+        .then((res) => {
+          if (!res.ok) throw Error(res.statusText)
+
+          return res.json()
+        })
+        .then((res) => {
+          return new Promise<Blog>((resolve) => {
+            setTimeout(() => {
+              resolve(res)
+            }, 4000)
+          })
+        }),
     {
-      //   onSuccess: (res) => {
-      //     client.setQueryData("blogs", (old: Blog[] | undefined) => {
-      //       if (!old) return [];
+      // onSuccess: (res) => {
+      //   client.setQueryData("blogs", (old: Blog[] | undefined) => {
+      //     if (!old) return [res]
 
-      //       const stuff = [...old];
+      //     const stuff = [...old]
 
-      //       stuff.push(res);
+      //     stuff.push(res)
 
-      //       return stuff;
-      //     });
+      //     return stuff
+      //   })
 
-      //     navigate("/");
-      //   },
-      onMutate: (blog) => {
+      //   navigate("/")
+      // },
+      onMutate: async (blog) => {
+        await client.cancelQueries("blogs")
+
         const oldData = client.getQueryData<Blog[]>("blogs")
 
         if (oldData) {
@@ -39,13 +53,19 @@ export default function useNewBlog(): UseMutationResult<Blog, MyError, Blog, unk
           stuff.push(blog)
 
           client.setQueryData("blogs", stuff)
-
-          navigate("/")
+        } else {
+          client.setQueryData("blogs", [blog])
         }
+
+        navigate("/")
 
         return { oldData }
       },
+      onError: (error: MyError, variables: Blog, context: any) => {
+        client.setQueryData("blogs", context.oldData)
+      },
       onSettled: () => {
+        // client.invalidateQueries("blogs")
         client.invalidateQueries("blogs", { exact: true })
       },
     }
